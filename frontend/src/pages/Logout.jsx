@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import axios from "axios";
+import api from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "../features/auth/authSlice";
@@ -12,9 +12,7 @@ const Logout = () => {
     const logoutUserFunc = async () => {
       try {
         // ✅ Logout isteği at → Cookie'deki token geçersiz kılınacak
-        await axios.get("http://localhost:5000/api/auth/logout", {
-          withCredentials: true, //Cookie'yi gönder
-        });
+        await api.get("/api/auth/logout");
 
         dispatch(logoutUser()); //🔥 store'dan kullanıcıyı sil
         navigate("/login"); // login sayfasına yönlendir

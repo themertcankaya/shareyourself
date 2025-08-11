@@ -1,6 +1,6 @@
 // pages/MyPosts.jsx
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../lib/api";
 import { Link } from "react-router-dom";
 
 const MyPosts = () => {
@@ -10,9 +10,7 @@ const MyPosts = () => {
   const fetchMine = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/posts/me", {
-        withCredentials: true,
-      });
+      const res = await api.get("/api/posts/me");
       setPosts(res.data.posts);
     } catch (e) {
       console.log(e);
@@ -28,9 +26,7 @@ const MyPosts = () => {
   const handleDelete = async (id) => {
     if (!confirm("Bu gönderiyi silmek istiyor musun?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/posts/${id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/api/posts/${id}`);
       // listeyi tazele
       fetchMine();
       // Home sayfasına dönersen orası mount olduğunda tekrar fetch edecek

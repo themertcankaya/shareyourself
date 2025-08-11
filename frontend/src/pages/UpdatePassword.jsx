@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../lib/api";
 
 const UpdatePassword = () => {
   // Şifre alanlarını tutan state
@@ -16,13 +16,7 @@ const UpdatePassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.patch(
-        "http://localhost:5000/api/user/update-password",
-        formData,
-        {
-          withCredentials: true, // 🍪 Cookie içindeki token backend'e gönderilsin
-        }
-      );
+      const res = await api.patch("/api/user/update-password", formData);
       alert(res.data.msg); // Başarılı mesaj
       // Formu temizle
       setFormData({

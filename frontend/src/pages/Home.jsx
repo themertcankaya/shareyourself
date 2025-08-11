@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../lib/api";
 const Home = () => {
   const [posts, setPosts] = useState([]);
   useEffect(() => {
     (async () => {
-      const res = await axios.get("http://localhost:5000/api/posts");
+      const res = await api.get("/api/posts");
       setPosts(res.data.posts);
     })();
   }, []);

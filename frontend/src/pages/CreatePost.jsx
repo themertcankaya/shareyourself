@@ -1,6 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
-
+import api from "../lib/api";
 const CreatePost = () => {
   const [form, setForm] = useState({ title: "", content: "" });
   const [file, setFile] = useState(null);
@@ -17,13 +16,11 @@ const CreatePost = () => {
     if (file) fd.append("image", file);
 
     try {
-      await axios.post("http://localhost:5000/api/posts", fd, {
-        withCredentials: true,
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await api.post("/api/posts", fd);
       alert("Gönderi oluşturuldu");
       setForm({ title: "", content: "" });
-    } catch (error) {
+      setFile(null);
+    } catch (err) {
       alert(err.response?.data?.msg || "Hata oluştu");
     }
   };

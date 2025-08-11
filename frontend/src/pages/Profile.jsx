@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"; // React Hook'larını alıyoruz
-import axios from "axios"; // HTTP istekleri için axios kullanıyoruz
+import api from "../lib/api";
 
 const Profile = () => {
   // Kullanıcının adı, emaili ve profil fotoğrafı bilgileri state'te tutulacak
@@ -15,9 +15,7 @@ const Profile = () => {
   // ✅ 1. Kullanıcı bilgilerini backend'den al
   const fetchUser = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/user/profile", {
-        withCredentials: true, // 🍪 Cookie'deki token backend'e gitsin
-      });
+      const res = await api.get("/api/user/profile");
       const { name, email, profileImage } = res.data.user; // cevaptan bilgileri al
       setUser({ name, email, profileImage }); // state'i güncelle
     } catch (err) {
@@ -46,28 +44,17 @@ const Profile = () => {
 
     try {
       // 🔸 A. Ad ve e-posta güncelle
-      await axios.patch(
-        "http://localhost:5000/api/user/update-user",
-        {
-          name: user.name,
-          email: user.email,
-        },
-        {
-          withCredentials: true, // token yine cookie'den gönderiliyor
-        }
-      );
+      await api.patch("/api/user/update-user", {
+        name: user.name,
+        email: user.email,
+      });
 
       // 🔸 B. Eğer bir dosya seçildiyse onu da ayrı olarak yükle
       if (file) {
         const formData = new FormData(); // form-data yapısı
         formData.append("image", file); // 👈 upload.js'teki name="image" olmalı
 
-        await axios.post("http://localhost:5000/api/upload/image", formData, {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "multipart/form-data", // FormData için gerekli
-          },
-        });
+        await api.post("/api/upload/image", formData);
       }
 
       alert("Güncelleme başarılı ✅"); // kullanıcıya bilgilendirme

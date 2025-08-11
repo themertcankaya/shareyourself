@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../../lib/api";
 
 // ✅ Sunucudan mevcut kullanıcıyı çek (sayfa yenilenince çalışır)
 
@@ -7,12 +7,7 @@ export const getCurrentUser = createAsyncThunk(
   "user/getCurrentUser",
   async (_, thunkAPI) => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/auth/current-user",
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await api.get("/api/auth/current-user");
       return res.data.user;
     } catch (error) {
       return thunkAPI.rejectWithValue("Giriş yapılmamış");

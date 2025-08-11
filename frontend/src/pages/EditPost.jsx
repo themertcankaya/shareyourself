@@ -1,8 +1,8 @@
 // pages/EditPost.jsx
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
 
+import { useParams, useNavigate } from "react-router-dom";
+import api from "../lib/api";
 const EditPost = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const EditPost = () => {
   useEffect(() => {
     (async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/posts/${id}`);
+        const res = await api.get(`/api/posts/${id}`);
         const p = res.data.post;
         setForm({ title: p.title, content: p.content });
       } catch (e) {
@@ -37,10 +37,7 @@ const EditPost = () => {
       fd.append("content", form.content);
       if (file) fd.append("image", file);
 
-      await axios.patch(`http://localhost:5000/api/posts/${id}`, fd, {
-        withCredentials: true,
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await api.patch(`/api/posts/${id}`, fd);
 
       alert("Güncellendi");
       // kendi liste sayfana dön

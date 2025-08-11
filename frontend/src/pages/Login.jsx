@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getCurrentUser } from "../features/auth/authSlice";
@@ -17,11 +17,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        formData,
-        { withCredentials: true }
-      );
+      const res = await api.post("/api/auth/login", formData);
       alert(res.data.msg);
 
       // ⚠️ dispatch'i await ile yapıyoruz
