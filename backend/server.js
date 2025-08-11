@@ -10,6 +10,8 @@ const connectDB = require("./config/db");
 const helmet = require("helmet");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+// Proxy arkasında HTTPS algılaması için
+app.set("trust proxy", 1);
 const rateLimit = require("express-rate-limit");
 const sanitizeMiddleware = require("./middlewares/sanitize");
 

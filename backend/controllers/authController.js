@@ -120,7 +120,9 @@ const login = async (req, res) => {
 
   // Token’ı cookie olarak gönder
   res.cookie("token", token, {
-    httpOnly: true, // JavaScript erişemez (XSS'e karşı korur)
+    httpOnly: true, // JS erişemez (XSS koruması)
+    secure: true, // sadece HTTPS
+    sameSite: "none", // cross-site için gerekli
     maxAge: 24 * 60 * 60 * 1000, // 1 gün
   });
 
@@ -140,6 +142,8 @@ const logout = async (req, res) => {
   // Cookie’yi geçersiz hale getir (token = "logout" ve expires = şimdi)
   res.cookie("token", "logout", {
     httpOnly: true,
+    secure: true, // sadece HTTPS
+    sameSite: "none", // cross-site logout çalışsın
     expires: new Date(Date.now()),
   });
 
