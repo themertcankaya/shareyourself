@@ -5,6 +5,14 @@ const { UnauthenticatedError, BadRequestError } = require("../errors");
 const sendVerificationEmail = require("../utils/sendVerificationEmail");
 const { StatusCodes } = require("http-status-codes");
 
+const isProd = process.env.NODE_ENV === "production";
+
+const cookieBase = {
+  httpOnly: true,
+  secure: isProd, // prod: true, local: false
+  sameSite: isProd ? "none" : "lax", // prod: none, local: lax
+};
+
 // JWT üretici yardımcı fonksiyon
 const createToken = (payload) => {
   return jwt.sign(payload, process.env.JWT_SECRET, {
@@ -33,7 +41,9 @@ const register = async (req, res) => {
   const user = await User.create({ name, email, password });
 
   // 5- Doğrulama linkini içeren e-postayı gönder
-  const origin = `http://localhost:5173`; // Vite frontend için
+  // önceki: const origin = `http://localhost:5173`;
+  const origin = process.env.CLIENT_URL || "http://localhost:5173";
+
   // await sendVerificationEmail(name, email, verificationToken, origin);
 
   // 6- Yanıt dön
@@ -120,9 +130,7 @@ const login = async (req, res) => {
 
   // Token’ı cookie olarak gönder
   res.cookie("token", token, {
-    httpOnly: true, // JS erişemez (XSS koruması)
-    secure: true, // sadece HTTPS
-    sameSite: "none", // cross-site için gerekli
+    ...cookieBase,
     maxAge: 24 * 60 * 60 * 1000, // 1 gün
   });
 
@@ -140,11 +148,9 @@ const login = async (req, res) => {
 // ✅ Çıkış işlemi
 const logout = async (req, res) => {
   // Cookie’yi geçersiz hale getir (token = "logout" ve expires = şimdi)
-  res.cookie("token", "logout", {
-    httpOnly: true,
-    secure: true, // sadece HTTPS
-    sameSite: "none", // cross-site logout çalışsın
-    expires: new Date(Date.now()),
+  res.cookie("token", "", {
+    ...cookieBase,
+    expires: new Date(0),
   });
 
   res.status(StatusCodes.OK).json({ msg: "Çıkış yapıldı." });

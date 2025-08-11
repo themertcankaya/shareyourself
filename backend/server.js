@@ -1,14 +1,19 @@
 require("dotenv").config();
+const path = require("path");
+const fs = require("fs");
+
 require("express-async-errors");
 const express = require("express");
 const app = express();
-
+const isProd = process.env.NODE_ENV === "production";
+const fileUpload = require("express-fileupload");
 // Core
 const connectDB = require("./config/db");
 
 // Güvenlik
 const helmet = require("helmet");
 const cors = require("cors");
+
 const cookieParser = require("cookie-parser");
 // Proxy arkasında HTTPS algılaması için
 app.set("trust proxy", 1);
@@ -24,12 +29,14 @@ const postRoutes = require("./routes/post");
 const errorHandlerMiddleware = require("./middlewares/errorHandler");
 
 // File Upload
-const fileUpload = require("express-fileupload");
+
+const tempDir = isProd ? "/tmp" : path.join(__dirname, "tmp");
+if (!isProd) fs.mkdirSync(tempDir, { recursive: true });
 // Dosya Yükleme (Cloudinary ile veya local temp klasör)
 app.use(
   fileUpload({
     useTempFiles: true,
-    tempFileDir: "./tmp",
+    tempFileDir: tempDir,
   })
 );
 // DB Models (örnek: Comment için test route'larında)
